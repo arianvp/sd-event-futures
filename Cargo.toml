@@ -1,0 +1,59 @@
+[package]
+name = "sd-event-futures"
+version = "0.1.0"
+edition = "2024"
+description = "Rust futures on top of systemd's sd-event loop"
+license = "MIT OR Apache-2.0"
+
+# Its unit tests have no benchmarks.
+[lib]
+bench = false
+
+[dependencies]
+libc = "0.2"
+
+[build-dependencies]
+pkg-config = "0.3"
+
+[features]
+# Wake tasks through `Rc`-based `LocalWaker`s instead of thread-safe
+# `Waker`s. Needs a nightly toolchain.
+local-waker = []
+
+# Runs its unit tests (option parsing) with `cargo test`.
+[[example]]
+name = "systemd-socket-proxyd"
+test = true
+
+[[bench]]
+name = "executor"
+harness = false
+
+# These tests fork, and run single-threaded so the children may allocate,
+# as children of PID 1 do.
+[[test]]
+name = "process"
+harness = false
+
+[[test]]
+name = "example_pid1_offload"
+harness = false
+
+[[test]]
+name = "example_machine_operation"
+harness = false
+
+# These tests double as the example daemon they start.
+[[test]]
+name = "example_greeter"
+harness = false
+
+[[test]]
+name = "example_systemd_socket_proxyd"
+harness = false
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+undocumented_unsafe_blocks = "deny"
